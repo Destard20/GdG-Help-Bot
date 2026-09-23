@@ -99,7 +99,7 @@ def build_index():
     # 1. Process root markdown files
     for entry in sorted(os.listdir(FAQ_DIR)):
         full_path = os.path.join(FAQ_DIR, entry)
-        if os.path.isfile(full_path) and entry.lower().endswith(".md"):
+        if os.path.isfile(full_path) and entry.lower().endswith(".md") and entry.lower() != "readme.md":
             rel_path = os.path.join(FAQ_DIR, entry).replace("\\", "/")
             title, preview, keywords = extract_metadata(full_path)
             file_id = generate_short_id(rel_path)
@@ -121,7 +121,7 @@ def build_index():
 
             for f_entry in sorted(os.listdir(cat_path)):
                 f_full = os.path.join(cat_path, f_entry)
-                if os.path.isfile(f_full) and f_entry.lower().endswith(".md"):
+                if os.path.isfile(f_full) and f_entry.lower().endswith(".md") and f_entry.lower() != "readme.md":
                     rel_path = os.path.join(cat_path, f_entry).replace("\\", "/")
                     title, preview, keywords = extract_metadata(f_full)
                     file_id = generate_short_id(rel_path)

@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,12 +34,13 @@ jobs:
 
       - name: Commit and Push if Changed
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           if [[ -n $(git status --porcelain faq_index.json) ]]; then
             git add faq_index.json
             git commit -m "Auto-update FAQ index [skip ci]"
-            git push
+            git push origin ${{ github.ref_name }}
           else
             echo "No changes in FAQ index."
           fi
+

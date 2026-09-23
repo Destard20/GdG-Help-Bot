@@ -2,7 +2,11 @@
 
 Bot Telegram ufficiale per la gestione dell'accoglienza, delle FAQ dinamiche e del sistema di assistenza a ticket per l'associazione ludica **Gilda del Grifone**.
 
+> ⚠️ **DISCLAIMER / AVVISO IMPORTANTE:**  
+> Le domande e le risposte presenti nella cartella `FAQ/` in questo repository sono **esclusivamente testi generati a scopo dimostrativo e di boilerplate**. **NON rappresentano informazioni, orari, quote o risposte reali** dell'associazione "Gilda del Grifone". Possono e devono essere modificate o sostituite dal direttivo dell'associazione con i dati effettivi.
+
 ---
+
 
 ## 🌟 Caratteristiche Principali
 
