@@ -25,7 +25,7 @@ except ValueError:
     TICKET_CHAT_ID = 0
 
 # GitHub Repository Configuration
-GITHUB_REPO = os.getenv("GITHUB_REPO", "").strip()
+GITHUB_REPO = os.getenv("GITHUB_REPO", "Destard20/GdG-Help-Bot").strip()
 GITHUB_BRANCH = os.getenv("GITHUB_BRANCH", "main").strip()
 
 # Custom Raw Base URL or default GitHub raw content URL
