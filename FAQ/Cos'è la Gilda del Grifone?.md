@@ -1,6 +1,8 @@
 # Cos'è la Gilda del Grifone?
+Keywords: chi siamo, associazione, storia, informazioni, info, scopo, giochi da tavolo, gdr
 
 La **Gilda del Grifone** è un'associazione di promozione sociale e culturale dedicata al mondo del gioco da tavolo, di ruolo, di carte e di miniature.
+
 
 ### La nostra missione:
 - Creare uno spazio di aggregazione e divertimento sano e inclusivo.

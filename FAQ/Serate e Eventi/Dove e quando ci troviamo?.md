@@ -1,6 +1,8 @@
 # Dove e quando ci troviamo?
+Keywords: sede, indirizzo, luogo, posto, orario, orari, giorni, mappa, arrivo, apertura
 
 Ci troviamo con regolarità per giocare insieme ogni settimana!
+
 
 ### Orari e Giorni:
 - 🎲 **Giovedì Sera (Serata Giochi da Tavolo):** Dalle ore 20:30 fino a notte fonda (circa 01:00).

@@ -1,6 +1,8 @@
 # Come posso iscrivermi alla Gilda?
+Keywords: iscriversi, iscrizione, modulo, associarsi, diventare socio, tessera, tesseramento
 
 Iscriversi alla Gilda del Grifone è semplicissimo!
+
 
 ### Passaggi per l'iscrizione:
 1. **Vieni a trovarci:** Puoi venire a conoscerci durante una delle nostre serate aperte (la prima serata di prova è sempre gratuita!).

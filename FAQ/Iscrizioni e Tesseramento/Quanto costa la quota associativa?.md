@@ -1,6 +1,8 @@
 # Quanto costa la quota associativa?
+Keywords: costo, prezzo, costi, prezzi, abbonamento, tariffa, tariffe, euro, pagare, pagamento, spesa, soldi
 
 La quota associativa annuale della Gilda del Grifone è:
+
 
 - **Socio Ordinario:** 15,00 € all'anno
 - **Socio Sostenitore:** 25,00 € all'anno (include spilletta esclusiva e gadget annuale dell'associazione)

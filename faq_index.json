@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-23T20:09:08.278952+00:00",
+  "generated_at": "2026-09-23T20:27:32.022058+00:00",
   "categories": [
     {
       "id": "48c89781",
@@ -12,14 +12,37 @@
           "title": "Come posso iscrivermi alla Gilda?",
           "filename": "Come posso iscrivermi alla Gilda?.md",
           "path": "FAQ/Iscrizioni e Tesseramento/Come posso iscrivermi alla Gilda?.md",
-          "preview": "Iscriversi alla Gilda del Grifone è semplicissimo!"
+          "preview": "Iscriversi alla Gilda del Grifone è semplicissimo!",
+          "keywords": [
+            "iscriversi",
+            "iscrizione",
+            "modulo",
+            "associarsi",
+            "diventare socio",
+            "tessera",
+            "tesseramento"
+          ]
         },
         {
           "id": "74e4b3cc",
           "title": "Quanto costa la quota associativa?",
           "filename": "Quanto costa la quota associativa?.md",
           "path": "FAQ/Iscrizioni e Tesseramento/Quanto costa la quota associativa?.md",
-          "preview": "La quota associativa annuale della Gilda del Grifone è:"
+          "preview": "La quota associativa annuale della Gilda del Grifone è:",
+          "keywords": [
+            "costo",
+            "prezzo",
+            "costi",
+            "prezzi",
+            "abbonamento",
+            "tariffa",
+            "tariffe",
+            "euro",
+            "pagare",
+            "pagamento",
+            "spesa",
+            "soldi"
+          ]
         }
       ]
     },
@@ -33,7 +56,16 @@
           "title": "Regolamento dell'associazione",
           "filename": "Regolamento dell'associazione.md",
           "path": "FAQ/Regolamento/Regolamento dell'associazione.md",
-          "preview": "Per garantire a tutti un'esperienza piacevole e serena, chiediamo a tutti i frequentatori della Gilda di seguire queste semplici regole:"
+          "preview": "Per garantire a tutti un'esperienza piacevole e serena, chiediamo a tutti i frequentatori della Gilda di seguire queste semplici regole:",
+          "keywords": [
+            "regole",
+            "regolamento",
+            "divieti",
+            "norme",
+            "comportamento",
+            "statuto",
+            "disciplina"
+          ]
         }
       ]
     },
@@ -47,14 +79,37 @@
           "title": "Dove e quando ci troviamo?",
           "filename": "Dove e quando ci troviamo?.md",
           "path": "FAQ/Serate e Eventi/Dove e quando ci troviamo?.md",
-          "preview": "Ci troviamo con regolarità per giocare insieme ogni settimana!"
+          "preview": "Ci troviamo con regolarità per giocare insieme ogni settimana!",
+          "keywords": [
+            "sede",
+            "indirizzo",
+            "luogo",
+            "posto",
+            "orario",
+            "orari",
+            "giorni",
+            "mappa",
+            "arrivo",
+            "apertura"
+          ]
         },
         {
           "id": "ed80fc1f",
           "title": "Posso venire anche se non conosco nessuno?",
           "filename": "Posso venire anche se non conosco nessuno?.md",
           "path": "FAQ/Serate e Eventi/Posso venire anche se non conosco nessuno?.md",
-          "preview": "Assolutamente SÌ! La stragrande maggioranza dei nostri soci attuali è arrivata alla Gilda la prima volta da sola senza conoscere nessuno."
+          "preview": "Assolutamente SÌ! La stragrande maggioranza dei nostri soci attuali è arrivata alla Gilda la prima volta da sola senza conoscere nessuno.",
+          "keywords": [
+            "da solo",
+            "sola",
+            "prima volta",
+            "accoglienza",
+            "neofita",
+            "nuovo",
+            "compagnia",
+            "aggregarsi",
+            "amici"
+          ]
         }
       ]
     }
@@ -65,7 +120,17 @@
       "title": "Cos'è la Gilda del Grifone?",
       "filename": "Cos'è la Gilda del Grifone?.md",
       "path": "FAQ/Cos'è la Gilda del Grifone?.md",
-      "preview": "La Gilda del Grifone è un'associazione di promozione sociale e culturale dedicata al mondo del gioco da tavolo, di ruolo, di carte e di miniature."
+      "preview": "La Gilda del Grifone è un'associazione di promozione sociale e culturale dedicata al mondo del gioco da tavolo, di ruolo, di carte e di miniature.",
+      "keywords": [
+        "chi siamo",
+        "associazione",
+        "storia",
+        "informazioni",
+        "info",
+        "scopo",
+        "giochi da tavolo",
+        "gdr"
+      ]
     }
   ]
 }

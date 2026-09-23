@@ -1,6 +1,8 @@
 # Regolamento dell'associazione
+Keywords: regole, regolamento, divieti, norme, comportamento, statuto, disciplina
 
 Per garantire a tutti un'esperienza piacevole e serena, chiediamo a tutti i frequentatori della Gilda di seguire queste semplici regole:
+
 
 1. **Rispetto dei materiali:** I giochi della ludoteca sono patrimonio comune. Maneggiali con cura, evita di mangiare cibi unti o bere liquidi a ridosso delle plance e delle carte imbustate.
 2. **Fair play e sportività:** Si gioca per divertirsi! Il rispetto reciproco tra giocatori è fondamentale. Non sono tollerati comportamenti aggressivi o polemiche esasperate.

@@ -155,11 +155,17 @@ python3 main.py
 2. Per creare una nuova categoria: crea una nuova sottocartella in `FAQ/` e inserisci i file `.md` al suo interno.
 3. Per aggiungere una FAQ generale: crea il file `.md` direttamente dentro `FAQ/`.
 4. **Titolo della domanda:** La prima riga del file deve iniziare con `# Titolo della domanda`, oppure il bot userà il nome del file (senza `.md`).
-5. **Aggiunta di immagini:** Inserisci l'immagine nella cartella `FAQ/images/` e referenziala nel file Markdown con:
+5. **Parole chiave / Tag per la ricerca:** Puoi aggiungere parole chiave o sinonimi inserendo una riga con `Keywords:` o `Tags:` (subito sotto al titolo o in qualsiasi punto del file), separati da virgola:
+   ```markdown
+   # Quanto costa la quota associativa?
+   Keywords: costo, prezzo, costi, abbonamento, tariffa, euro, pagare, soldi
+   ```
+   *Nota: questa riga viene usata solo per il motore di ricerca e viene nascosta automaticamente quando il bot invia la risposta all'utente.*
+6. **Aggiunta di immagini:** Inserisci l'immagine nella cartella `FAQ/images/` e referenziala nel file Markdown con:
    ```markdown
    ![Descrizione dell'immagine](FAQ/images/nome_immagine.png)
    ```
-6. **Aggiornamento dell'indice:**
+7. **Aggiornamento dell'indice:**
    - In locale, esegui:
      ```bash
      python scripts/generate_index.py

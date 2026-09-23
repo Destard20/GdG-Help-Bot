@@ -1,6 +1,8 @@
 # Posso venire anche se non conosco nessuno?
+Keywords: da solo, sola, prima volta, accoglienza, neofita, nuovo, compagnia, aggregarsi, amici
 
 **Assolutamente SÌ!** La stragrande maggioranza dei nostri soci attuali è arrivata alla Gilda la prima volta da sola senza conoscere nessuno.
+
 
 ### Come funziona l'accoglienza:
 - All'ingresso troverai sempre uno dei nostri soci "Accoglitori" o un Admin.

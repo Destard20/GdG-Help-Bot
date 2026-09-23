@@ -108,8 +108,21 @@ def extract_images_and_clean_text(raw_markdown: str, base_file_path: str) -> Tup
     """
     Parses Markdown text, extracts image references: ![alt](path_or_url),
     resolves relative paths to full GitHub URLs or local paths,
+    removes hidden keyword/tag metadata lines,
     and removes the markdown image tags so text is clean for Telegram.
     """
+    # 1. Strip metadata lines (Keywords:, Tags:, etc.)
+    cleaned_lines = []
+    for line in raw_markdown.splitlines():
+        stripped = line.strip()
+        kw_check = stripped
+        if kw_check.startswith("<!--") and kw_check.endswith("-->"):
+            kw_check = kw_check[4:-3].strip()
+        if kw_check.lower().startswith(("keywords:", "tags:", "tag:", "parole chiave:")):
+            continue
+        cleaned_lines.append(line)
+    raw_markdown = "\n".join(cleaned_lines)
+
     image_regex = r"!\[(.*?)\]\((.*?)\)"
     images = []
 
@@ -142,6 +155,7 @@ def extract_images_and_clean_text(raw_markdown: str, base_file_path: str) -> Tup
 
     cleaned_text = re.sub(image_regex, replace_image, raw_markdown)
     return cleaned_text.strip(), images
+
 
 async def load_faq_file(rel_path: str) -> Tuple[str, List[str]]:
     """
@@ -210,7 +224,8 @@ async def get_template(template_name: str) -> str:
 
 async def search_faqs(query: str, limit: int = 5) -> List[Dict[str, Any]]:
     """
-    Performs fuzzy search across all FAQs (title, category name, preview).
+    Performs enhanced fuzzy search across all FAQs:
+    Matches against Keywords/Tags, Title (full and word-level), Preview, and Category.
     Returns list of items sorted by relevance.
     """
     index = await get_faq_index()
@@ -223,15 +238,47 @@ async def search_faqs(query: str, limit: int = 5) -> List[Dict[str, Any]]:
     def score_entry(item: Dict[str, Any], cat_name: str = ""):
         title = item.get("title", "")
         preview = item.get("preview", "")
+        keywords = item.get("keywords", [])
 
+        # 1. Match against keywords/tags
+        keyword_score = 0
+        for kw in keywords:
+            kw_clean = kw.lower().strip()
+            if not kw_clean:
+                continue
+            if query_clean == kw_clean:
+                keyword_score = max(keyword_score, 100)
+            elif query_clean in kw_clean or kw_clean in query_clean:
+                keyword_score = max(keyword_score, 95)
+            else:
+                ratio = fuzz.ratio(query_clean, kw_clean)
+                if ratio >= 80:
+                    keyword_score = max(keyword_score, min(ratio + 10, 95))
+
+        # 2. Match against title
         title_score = fuzz.token_set_ratio(query_clean, title.lower())
-        preview_score = fuzz.token_set_ratio(query_clean, preview.lower())
-        cat_score = fuzz.token_set_ratio(query_clean, cat_name.lower()) if cat_name else 0
-
         if query_clean in title.lower():
             title_score = max(title_score, 90)
 
-        combined_score = max(title_score, int(preview_score * 0.7), int(cat_score * 0.6))
+        # 3. Word-level similarity with individual words in title
+        # e.g., "costo" matches "costa" (80% similarity)
+        title_words = re.findall(r"\w+", title.lower())
+        for w in title_words:
+            if len(w) >= 3 and len(query_clean) >= 3:
+                w_ratio = fuzz.ratio(query_clean, w)
+                if w_ratio >= 75:
+                    title_score = max(title_score, min(w_ratio + 5, 95))
+
+        # 4. Preview and category
+        preview_score = fuzz.token_set_ratio(query_clean, preview.lower())
+        cat_score = fuzz.token_set_ratio(query_clean, cat_name.lower()) if cat_name else 0
+
+        combined_score = max(
+            keyword_score,
+            title_score,
+            int(preview_score * 0.7),
+            int(cat_score * 0.6)
+        )
         return combined_score
 
     for item in index.get("root_files", []):
@@ -248,4 +295,5 @@ async def search_faqs(query: str, limit: int = 5) -> List[Dict[str, Any]]:
 
     scored_items.sort(key=lambda x: x[0], reverse=True)
     return [item for _, item in scored_items[:limit]]
+
 

@@ -17,12 +17,17 @@ OUTPUT_FILE = os.environ.get("OUTPUT_INDEX_FILE", "faq_index.json")
 EXCLUDED_DIRS = {"images", ".git", "__pycache__"}
 
 
-def extract_title_and_preview(file_path: str):
+def extract_metadata(file_path: str):
     """
-    Extracts the title (first # Heading or file name) and a short text preview.
+    Extracts the title, preview, and keywords from a markdown file.
+    Supports:
+      Keywords: tag1, tag2, tag3
+      Tags: tag1, tag2, tag3
+      <!-- Keywords: tag1, tag2 -->
     """
     title = None
     preview = ""
+    keywords = []
     lines = []
 
     try:
@@ -30,19 +35,36 @@ def extract_title_and_preview(file_path: str):
             lines = f.readlines()
     except Exception as e:
         print(f"Error reading {file_path}: {e}")
-        return os.path.splitext(os.path.basename(file_path))[0], ""
+        return os.path.splitext(os.path.basename(file_path))[0], "", []
 
     for line in lines:
         stripped = line.strip()
         if not stripped:
             continue
+
         # Extract title from the first H1
         if title is None and stripped.startswith("# "):
             title = stripped.lstrip("# ").strip()
             continue
+
+        # Check for keywords / tags
+        kw_candidate = stripped
+        if kw_candidate.startswith("<!--") and kw_candidate.endswith("-->"):
+            kw_candidate = kw_candidate[4:-3].strip()
+
+        lower_kw = kw_candidate.lower()
+        if lower_kw.startswith(("keywords:", "tags:", "tag:", "parole chiave:")):
+            parts = kw_candidate.split(":", 1)[1].split(",")
+            for p in parts:
+                cleaned_p = p.strip().lower()
+                if cleaned_p and cleaned_p not in keywords:
+                    keywords.append(cleaned_p)
+            continue
+
         # If we have title, pick the first descriptive line for preview
         if title and not preview:
-            # Strip markdown links and formatting for preview
+            if stripped.startswith("#"):
+                continue
             clean = re.sub(r"!\[.*?\]\(.*?\)", "", stripped)  # remove images
             clean = re.sub(r"\[(.*?)\]\(.*?\)", r"\1", clean)  # links to text
             clean = re.sub(r"[*_`#>-]", "", clean).strip()
@@ -53,7 +75,7 @@ def extract_title_and_preview(file_path: str):
         # Fallback to filename without extension
         title = os.path.splitext(os.path.basename(file_path))[0]
 
-    return title, preview
+    return title, preview, keywords
 
 
 def generate_short_id(val: str) -> str:
@@ -79,7 +101,7 @@ def build_index():
         full_path = os.path.join(FAQ_DIR, entry)
         if os.path.isfile(full_path) and entry.lower().endswith(".md"):
             rel_path = os.path.join(FAQ_DIR, entry).replace("\\", "/")
-            title, preview = extract_title_and_preview(full_path)
+            title, preview, keywords = extract_metadata(full_path)
             file_id = generate_short_id(rel_path)
             root_files.append({
                 "id": file_id,
@@ -87,6 +109,7 @@ def build_index():
                 "filename": entry,
                 "path": rel_path,
                 "preview": preview,
+                "keywords": keywords,
             })
 
     # 2. Process subdirectories (Categories)
@@ -100,7 +123,7 @@ def build_index():
                 f_full = os.path.join(cat_path, f_entry)
                 if os.path.isfile(f_full) and f_entry.lower().endswith(".md"):
                     rel_path = os.path.join(cat_path, f_entry).replace("\\", "/")
-                    title, preview = extract_title_and_preview(f_full)
+                    title, preview, keywords = extract_metadata(f_full)
                     file_id = generate_short_id(rel_path)
                     cat_files.append({
                         "id": file_id,
@@ -108,6 +131,7 @@ def build_index():
                         "filename": f_entry,
                         "path": rel_path,
                         "preview": preview,
+                        "keywords": keywords,
                     })
 
             categories.append({

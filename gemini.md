@@ -77,16 +77,20 @@ The bot serves two core functions:
 - Fetches remote `faq_index.json`, Markdown files, and templates from GitHub raw URLs asynchronously via `aiohttp`.
 - Implements TTL caching (`FAQ_CACHE_TTL`) to avoid rate-limiting and maximize responsiveness.
 - Seamless fallback to local repository files if GitHub is unreachable or in local development mode (`USE_LOCAL_FALLBACK=true`).
-- **Markdown Image Parser:** Regex-based extraction of `![alt](path)`. Resolves relative paths against the GitHub raw URL or local filesystem, allowing Telegram to send photos via `send_photo`.
-- **Fuzzy Search Engine:** Uses `thefuzz.token_set_ratio` against title, category name, and text preview with scoring weights and substring bonus.
-
+- **Markdown Image Parser:** Regex-based extraction of `![alt](path)`. Resolves relative paths against the GitHub raw URL or local filesystem, allowing Telegram to send photos via `send_photo`. Automatically strips hidden `Keywords:` / `Tags:` lines from user-facing text.
+- **Enhanced Search Engine:** Multi-tiered matching algorithm combining:
+  1. Keywords / Tags exact & fuzzy matching (boost up to 100/100).
+  2. Substring & word-level Levenshtein similarity against title words (e.g. "costo" matches "costa" at 80%+).
+  3. Token set ratio across title, preview, and category names.
 
 ### 4. `scripts/generate_index.py` & GitHub Actions
 - Scans `FAQ/` recursively.
 - Subdirectories are treated as FAQ categories; root `.md` files are treated as general FAQs.
+- Extracts metadata: titles, clean previews, and comma-separated `Keywords:` or `Tags:` lines.
 - Calculates an 8-byte hex hash (`MD5`) for every item to serve as a compact ID.
 - **Why?** Telegram limits `callback_data` on `InlineKeyboardButton` to **64 bytes**. Long file paths fail Telegram's API checks; short IDs (`cat:48c89781`, `faq:c5aa1004`) remain strictly under 15 bytes.
 - `.github/workflows/update_faq_index.yml` runs the script upon every push touching `FAQ/**` and commits changes back to the repository.
+
 
 ### 5. `main.py`
 - Registers handlers using `python-telegram-bot` v20+ async architecture.
