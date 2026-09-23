@@ -36,6 +36,7 @@ GITHUB_RAW_BASE_URL = os.getenv("GITHUB_RAW_BASE_URL", _default_raw_url).rstrip(
 DATABASE_PATH = os.getenv("DATABASE_PATH", "tickets.db").strip()
 
 # Fallback & caching settings
+USE_LOCAL_FILES = os.getenv("USE_LOCAL_FILES", "false").lower() in ("true", "1", "yes")
 USE_LOCAL_FALLBACK = os.getenv("USE_LOCAL_FALLBACK", "true").lower() in ("true", "1", "yes")
 FAQ_CACHE_TTL = int(os.getenv("FAQ_CACHE_TTL", "300"))
 
@@ -55,6 +56,6 @@ def validate_config() -> list[str]:
         warnings.append("TELEGRAM_BOT_TOKEN is not configured! The bot will not be able to connect to Telegram.")
     if TICKET_CHAT_ID == 0:
         warnings.append("TICKET_CHAT_ID is not configured! Admin ticket notifications will fail.")
-    if not GITHUB_REPO and not USE_LOCAL_FALLBACK:
-        warnings.append("Neither GITHUB_REPO nor USE_LOCAL_FALLBACK is set! Bot will not be able to load FAQs.")
+    if not GITHUB_REPO and not USE_LOCAL_FALLBACK and not USE_LOCAL_FILES:
+        warnings.append("Neither GITHUB_REPO nor USE_LOCAL_FILES/USE_LOCAL_FALLBACK is set! Bot will not be able to load FAQs.")
     return warnings

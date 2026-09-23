@@ -17,6 +17,7 @@ Ecco la lista dei membri del direttivo e referenti dell'associazione a cui puoi 
 📜 <b>Segretario</b>
 • Nome: Valentin Popescu
 • Contatto: <a href="https://t.me/Destard">@Destard</a>
+• Altro: Creatore ed attuale manutentore di: @GdG_Event_bot e @GdG_Help_bot.
 
 ⚖️ <b>Consigliere</b>
 • Nome: Massimiliano Bonelli
@@ -26,6 +27,17 @@ Ecco la lista dei membri del direttivo e referenti dell'associazione a cui puoi 
 • Nome: Nicolò Salvemini
 • Contatto: <a href="https://t.me/Astraros">@Astraros</a>
 
+---
+🎲 <b>Referenti Eventi</b>
+Se vuoi proporre o organizzare un evento, contatta direttamente uno dei nostri referenti:
+
+🎯 <b>Admin Eventi</b>
+• Nome: Valentin Popescu
+• Contatto: <a href="https://t.me/Destard">@Destard</a>
+
+🎯 <b>Admin Eventi</b>
+• Nome: Manuele Cometto
+• Contatto: <a href="https://t.me/ManueleAbi">@ManueleAbi</a>
 
 ---
 ℹ️ <i>Suggerimento:</i> Se hai una domanda specifica per cui non trovi risposta nelle FAQ, puoi anche usare il pulsante <b>"🎫 Apri un Ticket"</b> per inviare una notifica a tutti gli admin contemporaneamente!

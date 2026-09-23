@@ -41,7 +41,8 @@ async def get_faq_index(force_refresh: bool = False) -> Dict[str, Any]:
     """
     Returns the FAQ index dictionary.
     Caches the index in memory for config.FAQ_CACHE_TTL seconds.
-    Tries GitHub first, then falls back to local file.
+    If USE_LOCAL_FILES is True, tries local file first, then GitHub.
+    Otherwise, tries GitHub first, then falls back to local file if USE_LOCAL_FALLBACK is True.
     """
     global _INDEX_CACHE, _INDEX_CACHE_TIME
     now = time.time()
@@ -51,29 +52,41 @@ async def get_faq_index(force_refresh: bool = False) -> Dict[str, Any]:
 
     index_data = None
 
-    # 1. Try fetching from GitHub
-    if config.GITHUB_RAW_BASE_URL:
-        remote_url = f"{config.GITHUB_RAW_BASE_URL}/faq_index.json"
-        text = await _fetch_url_text(remote_url)
-        if text:
-            try:
-                index_data = json.loads(text)
-                logger.info("Loaded FAQ index from GitHub raw URL.")
-            except json.JSONDecodeError as e:
-                logger.error("Error decoding remote faq_index.json: %s", e)
-
-    # 2. Fallback to local file if needed
-    if index_data is None and config.USE_LOCAL_FALLBACK:
+    def _read_local_index() -> Optional[Dict[str, Any]]:
         local_path = "faq_index.json"
         if os.path.exists(local_path):
             try:
                 with open(local_path, "r", encoding="utf-8") as f:
-                    index_data = json.load(f)
+                    data = json.load(f)
                     logger.info("Loaded FAQ index from local file.")
+                    return data
             except Exception as e:
                 logger.error("Error loading local faq_index.json: %s", e)
+        return None
 
-    # 3. Default empty index if still not found
+    async def _read_remote_index() -> Optional[Dict[str, Any]]:
+        if config.GITHUB_RAW_BASE_URL:
+            remote_url = f"{config.GITHUB_RAW_BASE_URL}/faq_index.json"
+            text = await _fetch_url_text(remote_url)
+            if text:
+                try:
+                    data = json.loads(text)
+                    logger.info("Loaded FAQ index from GitHub raw URL.")
+                    return data
+                except json.JSONDecodeError as e:
+                    logger.error("Error decoding remote faq_index.json: %s", e)
+        return None
+
+    if config.USE_LOCAL_FILES:
+        index_data = _read_local_index()
+        if index_data is None:
+            index_data = await _read_remote_index()
+    else:
+        index_data = await _read_remote_index()
+        if index_data is None and config.USE_LOCAL_FALLBACK:
+            index_data = _read_local_index()
+
+    # Default empty index if still not found
     if index_data is None:
         index_data = {"version": 1, "categories": [], "root_files": []}
 
@@ -145,7 +158,9 @@ def extract_images_and_clean_text(raw_markdown: str, base_file_path: str) -> Tup
             else:
                 resolved_rel = clean_src
 
-            if config.GITHUB_RAW_BASE_URL:
+            if config.USE_LOCAL_FILES and os.path.exists(resolved_rel):
+                images.append(resolved_rel)
+            elif config.GITHUB_RAW_BASE_URL:
                 full_url = f"{config.GITHUB_RAW_BASE_URL}/{resolved_rel}"
                 images.append(full_url)
             else:
@@ -171,22 +186,30 @@ async def load_faq_file(rel_path: str) -> Tuple[str, List[str]]:
         if now - cache_ts < config.FAQ_CACHE_TTL:
             raw_text = cached_text
 
-    if raw_text is None:
-        # 1. Try remote
+    def _read_local_file() -> Optional[str]:
+        if os.path.exists(rel_path):
+            try:
+                with open(rel_path, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception as e:
+                logger.error("Failed to read local file %s: %s", rel_path, e)
+        return None
+
+    async def _read_remote_file() -> Optional[str]:
         if config.GITHUB_RAW_BASE_URL:
             remote_url = f"{config.GITHUB_RAW_BASE_URL}/{rel_path.lstrip('/')}"
-            fetched = await _fetch_url_text(remote_url)
-            if fetched:
-                raw_text = fetched
+            return await _fetch_url_text(remote_url)
+        return None
 
-        # 2. Try local fallback
-        if raw_text is None and config.USE_LOCAL_FALLBACK:
-            if os.path.exists(rel_path):
-                try:
-                    with open(rel_path, "r", encoding="utf-8") as f:
-                        raw_text = f.read()
-                except Exception as e:
-                    logger.error("Failed to read local file %s: %s", rel_path, e)
+    if raw_text is None:
+        if config.USE_LOCAL_FILES:
+            raw_text = _read_local_file()
+            if raw_text is None:
+                raw_text = await _read_remote_file()
+        else:
+            raw_text = await _read_remote_file()
+            if raw_text is None and config.USE_LOCAL_FALLBACK:
+                raw_text = _read_local_file()
 
         if raw_text is not None:
             _CONTENT_CACHE[rel_path] = (raw_text, now)
@@ -200,24 +223,39 @@ async def load_faq_file(rel_path: str) -> Tuple[str, List[str]]:
 async def get_template(template_name: str) -> str:
     """
     Loads a template markdown file (e.g. greeting.md, admins.md).
-    Tries remote templates first, then local templates directory.
+    Tries local templates first if USE_LOCAL_FILES is True, otherwise tries remote first.
     """
     rel_path = f"templates/{template_name}"
 
-    # Try remote
-    if config.GITHUB_RAW_BASE_URL:
-        remote_url = f"{config.GITHUB_RAW_BASE_URL}/{rel_path}"
-        fetched = await _fetch_url_text(remote_url)
-        if fetched:
-            return fetched
+    def _read_local_template() -> Optional[str]:
+        if os.path.exists(rel_path):
+            try:
+                with open(rel_path, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception as e:
+                logger.error("Failed to read local template %s: %s", rel_path, e)
+        return None
 
-    # Try local
-    if os.path.exists(rel_path):
-        try:
-            with open(rel_path, "r", encoding="utf-8") as f:
-                return f.read()
-        except Exception as e:
-            logger.error("Failed to read local template %s: %s", rel_path, e)
+    async def _read_remote_template() -> Optional[str]:
+        if config.GITHUB_RAW_BASE_URL:
+            remote_url = f"{config.GITHUB_RAW_BASE_URL}/{rel_path}"
+            return await _fetch_url_text(remote_url)
+        return None
+
+    if config.USE_LOCAL_FILES:
+        content = _read_local_template()
+        if content is None:
+            content = await _read_remote_template()
+        if content is not None:
+            return content
+    else:
+        content = await _read_remote_template()
+        if content is not None:
+            return content
+        if config.USE_LOCAL_FALLBACK:
+            content = _read_local_template()
+            if content is not None:
+                return content
 
     return f"Template {template_name} non trovato."
 
