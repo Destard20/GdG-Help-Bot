@@ -1,12 +1,35 @@
 {
   "version": 1,
-  "generated_at": "2026-09-23T20:46:46.197033+00:00",
+  "generated_at": "2026-09-23T22:32:59.144390+00:00",
   "categories": [
     {
       "id": "48c89781",
       "name": "Iscrizioni e Tesseramento",
       "path": "FAQ/Iscrizioni e Tesseramento",
       "files": [
+        {
+          "id": "ef5c5623",
+          "title": "A cosa serve la tessera?",
+          "filename": "A cosa serve la tessera?.md",
+          "path": "FAQ/Iscrizioni e Tesseramento/A cosa serve la tessera?.md",
+          "preview": "La quota associativa annuale della Gilda del Grifone è di €20.",
+          "keywords": [
+            "costo",
+            "prezzo",
+            "costi",
+            "prezzi",
+            "abbonamento",
+            "tariffa",
+            "tariffe",
+            "euro",
+            "pagare",
+            "pagamento",
+            "spesa",
+            "soldi",
+            "tessera",
+            "iscrizione"
+          ]
+        },
         {
           "id": "c5aa1004",
           "title": "Come posso iscrivermi alla Gilda?",
@@ -22,50 +45,20 @@
             "tessera",
             "tesseramento"
           ]
-        },
-        {
-          "id": "74e4b3cc",
-          "title": "Quanto costa la quota associativa?",
-          "filename": "Quanto costa la quota associativa?.md",
-          "path": "FAQ/Iscrizioni e Tesseramento/Quanto costa la quota associativa?.md",
-          "preview": "La quota associativa annuale della Gilda del Grifone è:",
-          "keywords": [
-            "costo",
-            "prezzo",
-            "costi",
-            "prezzi",
-            "abbonamento",
-            "tariffa",
-            "tariffe",
-            "euro",
-            "pagare",
-            "pagamento",
-            "spesa",
-            "soldi"
-          ]
         }
       ]
+    },
+    {
+      "id": "2243563c",
+      "name": "Offerte della Gilda",
+      "path": "FAQ/Offerte della Gilda",
+      "files": []
     },
     {
       "id": "d1e9cb6c",
       "name": "Regolamento",
       "path": "FAQ/Regolamento",
       "files": [
-        {
-          "id": "71201327",
-          "title": "Come trattare i giochi della ludoteca?",
-          "filename": "Come trattare i giochi della ludoteca?.md",
-          "path": "FAQ/Regolamento/Come trattare i giochi della ludoteca?.md",
-          "preview": "I giochi della ludoteca sono a disposizione di tutti: abbiatene cura, evitate cibi o bibite aperte sui tavoli da gioco durante le partite.",
-          "keywords": [
-            "cura",
-            "manutenzione",
-            "cibo",
-            "bevande",
-            "bustine",
-            "carte"
-          ]
-        },
         {
           "id": "5fe1328a",
           "title": "Regolamento dell'associazione",
@@ -94,7 +87,7 @@
           "title": "Dove e quando ci troviamo?",
           "filename": "Dove e quando ci troviamo?.md",
           "path": "FAQ/Serate e Eventi/Dove e quando ci troviamo?.md",
-          "preview": "Ci troviamo con regolarità per giocare insieme ogni settimana!",
+          "preview": "🎲 Ogni Lunedì, Mercoledì e Venerdì: Dalle ore 20:45 fino a mezzanotte.",
           "keywords": [
             "sede",
             "indirizzo",
@@ -106,24 +99,6 @@
             "mappa",
             "arrivo",
             "apertura"
-          ]
-        },
-        {
-          "id": "ed80fc1f",
-          "title": "Posso venire anche se non conosco nessuno?",
-          "filename": "Posso venire anche se non conosco nessuno?.md",
-          "path": "FAQ/Serate e Eventi/Posso venire anche se non conosco nessuno?.md",
-          "preview": "Assolutamente SÌ! La stragrande maggioranza dei nostri soci attuali è arrivata alla Gilda la prima volta da sola senza conoscere nessuno.",
-          "keywords": [
-            "da solo",
-            "sola",
-            "prima volta",
-            "accoglienza",
-            "neofita",
-            "nuovo",
-            "compagnia",
-            "aggregarsi",
-            "amici"
           ]
         }
       ]
