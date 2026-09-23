@@ -6,6 +6,7 @@ Handles group greetings, FAQ browsing/search, and admin ticket system.
 import html
 import logging
 import os
+import re
 from typing import Optional
 
 from telegram import (
@@ -35,13 +36,42 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def escape_md(text: str) -> str:
-    """Escapes Telegram Markdown special characters."""
-    chars = ["_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", "{", "}", ".", "!"]
-    escaped = str(text)
-    for c in chars:
-        escaped = escaped.replace(c, f"\\{c}")
-    return escaped
+def format_telegram_html(text: str) -> str:
+    """
+    Converts Markdown syntax to Telegram-supported HTML while preserving existing HTML tags.
+    Supports:
+      # Heading -> <b>Heading</b>
+      **bold** -> <b>bold</b>
+      [text](url) -> <a href="url">text</a>
+      `code` -> <code>code</code>
+      - item / * item -> • item
+    """
+    if not text:
+        return ""
+
+    # Convert markdown links [text](url) to <a href="url">text</a>
+    text = re.sub(r'\[([^\]]+)\]\((https?://[^\)]+)\)', r'<a href="\2">\1</a>', text)
+    text = re.sub(r'\[([^\]]+)\]\((tg://[^\)]+)\)', r'<a href="\2">\1</a>', text)
+
+    # Convert Markdown bold **text** to <b>text</b>
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+
+    # Convert single backticks `code` to <code>code</code>
+    text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
+
+    # Convert headers and bullet lists
+    lines = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            header_text = stripped.lstrip("#").strip()
+            lines.append(f"<b>{header_text}</b>")
+        elif stripped.startswith(("- ", "* ")) and not stripped.startswith("**"):
+            lines.append(f"• {stripped[2:]}")
+        else:
+            lines.append(line)
+
+    return "\n".join(lines)
 
 
 def build_main_menu_keyboard() -> InlineKeyboardMarkup:
@@ -53,6 +83,7 @@ def build_main_menu_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton("👥 Contatta gli Admin", callback_data="menu_admins")],
     ]
     return InlineKeyboardMarkup(keyboard)
+
 
 
 # ===================================================================
@@ -72,20 +103,23 @@ async def handle_new_chat_members(update: Update, context: ContextTypes.DEFAULT_
         if member.is_bot:
             continue
 
-        # Use full Telegram name (not username)
-        user_name = member.full_name
+        # Use full Telegram name (not username) escaped for HTML
+        user_name = html.escape(member.full_name)
 
         text = greeting_template.replace("{user_name}", user_name)
         text = text.replace("{bot_username}", config.BOT_USERNAME)
+        formatted_text = format_telegram_html(text)
 
         try:
             await message.reply_text(
-                text=text,
-                parse_mode=ParseMode.MARKDOWN,
+                text=formatted_text,
+                parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
             )
         except Exception as e:
             logger.error("Error sending greeting to %s: %s", user_name, e)
+
+
 # ===================================================================
 # Private Chat: Basic Commands
 # ===================================================================
@@ -94,49 +128,50 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends the welcome message and main menu."""
     user = update.effective_user
     welcome_text = (
-        f"🎲 **Benvenuto/a {user.first_name} nel Bot di Supporto della Gilda del Grifone!** 🦅\n\n"
+        f"🎲 <b>Benvenuto/a {html.escape(user.first_name)} nel Bot di Supporto della Gilda del Grifone!</b> 🦅\n\n"
         "Cosa desideri fare?\n"
-        "• Sfogliare le nostre **FAQ** con tutte le risposte su tesseramento, orari e giochi.\n"
-        "• **Cercare** una risposta scrivendomi direttamente una parola chiave.\n"
-        "• **Aprire un ticket** per chiedere qualcosa agli organizzatori.\n"
-        "• Consultare i contatti degli **Admin**."
+        "• Sfogliare le nostre <b>FAQ</b> con tutte le risposte su tesseramento, orari e giochi.\n"
+        "• <b>Cercare</b> una risposta scrivendomi direttamente una parola chiave.\n"
+        "• <b>Aprire un ticket</b> per chiedere qualcosa agli organizzatori.\n"
+        "• Consultare i contatti degli <b>Admin</b>."
     )
     keyboard = build_main_menu_keyboard()
     await update.message.reply_text(
         text=welcome_text,
         reply_markup=keyboard,
-        parse_mode=ParseMode.MARKDOWN,
+        parse_mode=ParseMode.HTML,
     )
 
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends helpful usage instructions."""
     help_text = (
-        "ℹ️ **Guida ai comandi del Bot della Gilda:**\n\n"
+        "ℹ️ <b>Guida ai comandi del Bot della Gilda:</b>\n\n"
         "/start o /menu - Mostra il menu principale\n"
         "/ticket - Apri un ticket per fare una domanda agli organizzatori\n"
         "/admin - Mostra l'elenco degli amministratori e referenti\n"
         "/annulla - Annulla l'operazione in corso (es. apertura ticket)\n\n"
-        "💡 *Suggerimento:* Puoi scrivermi qualsiasi domanda direttamente in chat e cercherò per te tra le risposte più pertinenti!"
+        "💡 <i>Suggerimento:</i> Puoi scrivermi qualsiasi domanda direttamente in chat e cercherò per te tra le risposte più pertinenti!"
     )
     await update.message.reply_text(
         text=help_text,
         reply_markup=build_main_menu_keyboard(),
-        parse_mode=ParseMode.MARKDOWN,
+        parse_mode=ParseMode.HTML,
     )
 
 
 async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Shows the admins template."""
     admin_text = await faq_manager.get_template("admins.md")
+    formatted_admin = format_telegram_html(admin_text)
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
         [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
     ])
     await update.message.reply_text(
-        text=admin_text,
+        text=formatted_admin,
         reply_markup=keyboard,
-        parse_mode=ParseMode.MARKDOWN,
+        parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
     )
 
@@ -145,11 +180,12 @@ async def cmd_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Initiates opening a ticket via command."""
     context.user_data["waiting_for_ticket"] = True
     text = (
-        "🎫 **Apertura Ticket di Supporto**\n\n"
+        "🎫 <b>Apertura Ticket di Supporto</b>\n\n"
         "Scrivi qui sotto in un unico messaggio la tua domanda o richiesta per lo staff della Gilda del Grifone.\n\n"
-        "_(Se vuoi annullare, digita /annulla)_"
+        "<i>(Se vuoi annullare, digita /annulla)</i>"
     )
-    await update.message.reply_text(text=text, parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text(text=text, parse_mode=ParseMode.HTML)
+
 
 
 async def cmd_annulla(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -179,23 +215,23 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
 
     if data == "menu_main":
         welcome_text = (
-            "🎲 **Menu Principale - Gilda del Grifone** 🦅\n\n"
+            "🎲 <b>Menu Principale - Gilda del Grifone</b> 🦅\n\n"
             "Come possiamo aiutarti?\n"
-            "• Sfoglia o cerca nelle **FAQ**\n"
-            "• **Apri un ticket** di supporto\n"
-            "• Consulta i contatti **Admin**"
+            "• Sfoglia o cerca nelle <b>FAQ</b>\n"
+            "• <b>Apri un ticket</b> di supporto\n"
+            "• Consulta i contatti <b>Admin</b>"
         )
         try:
             await query.edit_message_text(
                 text=welcome_text,
                 reply_markup=build_main_menu_keyboard(),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.HTML,
             )
         except Exception:
             await query.message.reply_text(
                 text=welcome_text,
                 reply_markup=build_main_menu_keyboard(),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.HTML,
             )
 
     elif data == "menu_browse":
@@ -216,24 +252,24 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
 
         keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
 
-        browse_text = "📚 **Seleziona una categoria o una domanda:**"
+        browse_text = "📚 <b>Seleziona una categoria o una domanda:</b>"
         try:
             await query.edit_message_text(
                 text=browse_text,
                 reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.HTML,
             )
         except Exception:
             await query.message.reply_text(
                 text=browse_text,
                 reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.HTML,
             )
 
     elif data == "menu_search_prompt":
         prompt_text = (
-            "🔍 **Ricerca nelle FAQ:**\n\n"
-            "Scrivi semplicemente qui in chat una parola o la tua domanda (es. *iscrizione*, *quota*, *sede*, *orari*) "
+            "🔍 <b>Ricerca nelle FAQ:</b>\n\n"
+            "Scrivi semplicemente qui in chat una parola o la tua domanda (es. <i>iscrizione</i>, <i>quota</i>, <i>sede</i>, <i>orari</i>) "
             "e cercherò per te le risposte più pertinenti!\n\n"
             "Oppure clicca sotto per tornare al menu."
         )
@@ -241,29 +277,30 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             [InlineKeyboardButton("📚 Sfoglia tutte le FAQ", callback_data="menu_browse")],
             [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
         ])
-        await query.message.reply_text(text=prompt_text, reply_markup=keyboard, parse_mode=ParseMode.MARKDOWN)
+        await query.message.reply_text(text=prompt_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
 
     elif data == "menu_admins":
         admin_text = await faq_manager.get_template("admins.md")
+        formatted_admin = format_telegram_html(admin_text)
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
             [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
         ])
         await query.message.reply_text(
-            text=admin_text,
+            text=formatted_admin,
             reply_markup=keyboard,
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
             disable_web_page_preview=True,
         )
 
     elif data == "menu_open_ticket":
         context.user_data["waiting_for_ticket"] = True
         prompt = (
-            "🎫 **Apertura Ticket di Supporto**\n\n"
+            "🎫 <b>Apertura Ticket di Supporto</b>\n\n"
             "Scrivi qui sotto in un messaggio la tua domanda o richiesta per lo staff della Gilda.\n\n"
-            "_(Invia /annulla per uscire senza inviare il ticket)_"
+            "<i>(Invia /annulla per uscire senza inviare il ticket)</i>"
         )
-        await query.message.reply_text(text=prompt, parse_mode=ParseMode.MARKDOWN)
+        await query.message.reply_text(text=prompt, parse_mode=ParseMode.HTML)
 
     elif data.startswith("cat:"):
         cat_id = data.split(":", 1)[1]
@@ -281,18 +318,18 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         keyboard.append([InlineKeyboardButton("🔙 Tutte le Categorie", callback_data="menu_browse")])
         keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
 
-        cat_text = f"📁 **Categoria: {category['name']}**\n\nScegli una domanda da consultare:"
+        cat_text = f"📁 <b>Categoria: {html.escape(category['name'])}</b>\n\nScegli una domanda da consultare:"
         try:
             await query.edit_message_text(
                 text=cat_text,
                 reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.HTML,
             )
         except Exception:
             await query.message.reply_text(
                 text=cat_text,
                 reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.HTML,
             )
 
     elif data.startswith("faq:"):
@@ -322,12 +359,14 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
         ]
 
+        formatted_content = format_telegram_html(content)
         await query.message.reply_text(
-            text=content,
+            text=formatted_content,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
             disable_web_page_preview=True,
         )
+
 
     elif data.startswith("ticket_"):
         await handle_admin_ticket_callback(update, context)
@@ -419,14 +458,14 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         # Notify user
         confirmation = (
-            f"✅ **Ticket #{ticket_id} inviato con successo!**\n\n"
+            f"✅ <b>Ticket #{ticket_id} inviato con successo!</b>\n\n"
             "I nostri amministratori hanno ricevuto la tua richiesta.\n"
             "Ti risponderemo direttamente qui appena possibile. Grazie per la pazienza! 🎲"
         )
         await message.reply_text(
             text=confirmation,
             reply_markup=build_main_menu_keyboard(),
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
         )
 
         # Send ticket to admin chat
@@ -460,13 +499,13 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
 
         reply_text = (
-            f"🔍 **Ho trovato queste risposte per:** _{escape_md(text)}_\n\n"
+            f"🔍 <b>Ho trovato queste risposte per:</b> <i>{html.escape(text)}</i>\n\n"
             "Clicca sulla domanda che ti interessa per leggere i dettagli:"
         )
         await message.reply_text(
             text=reply_text,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
         )
     else:
         keyboard = [
@@ -475,14 +514,15 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
         ]
         no_res_text = (
-            f"🤔 Non ho trovato risposte specifiche per: _{escape_md(text)}_\n\n"
+            f"🤔 Non ho trovato risposte specifiche per: <i>{html.escape(text)}</i>\n\n"
             "Vuoi aprire un ticket di supporto per chiedere direttamente al nostro staff?"
         )
         await message.reply_text(
             text=no_res_text,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
         )
+
 
 # ===================================================================
 # Admin Chat: Ticket Actions & Responses
@@ -610,10 +650,10 @@ async def cmd_admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Send message to the user
     user_msg = (
-        f"📬 **Risposta al tuo Ticket #{ticket_id} - Gilda del Grifone**\n\n"
-        f"Gentile {ticket['user_full_name']},\n"
+        f"📬 <b>Risposta al tuo Ticket #{ticket_id} - Gilda del Grifone</b>\n\n"
+        f"Gentile {html.escape(ticket['user_full_name'])},\n"
         "i nostri amministratori hanno risposto alla tua richiesta:\n\n"
-        f"💬 _{response_text}_\n\n"
+        f"💬 <i>{html.escape(response_text)}</i>\n\n"
         "---\n"
         "💡 Puoi consultare le nostre FAQ in qualsiasi momento usando il menu principale!\n"
         "Se hai altre domande, siamo sempre a tua disposizione! 🎲"
@@ -624,7 +664,7 @@ async def cmd_admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=user_id,
             text=user_msg,
             reply_markup=build_main_menu_keyboard(),
-            parse_mode=ParseMode.MARKDOWN,
+            parse_mode=ParseMode.HTML,
         )
 
         # Record in DB
@@ -634,6 +674,7 @@ async def cmd_admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"✅ Risposta inviata con successo all'utente per il <b>Ticket #{ticket_id}</b>!",
             parse_mode=ParseMode.HTML,
         )
+
     except Exception as e:
         logger.error("Failed to send reply to user %s for ticket #%s: %s", user_id, ticket_id, e)
         await message.reply_text(
