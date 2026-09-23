@@ -1,13 +1,20 @@
-👋 Benvenuto/a *{user_name}* nella *Gilda del Grifone*! 🎲🦅
+👋 Benvenuto/a <i>{user_name}</i> nella <i>Gilda del Grifone</i>! 🎲🦅
 
 Siamo felicissimi di averti con noi! La Gilda è un'associazione di appassionati di giochi da tavolo, di ruolo e serate in compagnia.
 
 Sentiti libero/a di presentarti e dare un'occhiata a quello a cui stiamo giocando ultimamente.
 
 ---
-💡 *Hai qualche domanda o vuoi scoprire di più sulle nostre attività?*
-Puoi fare domande liberamente qui nel gruppo, oppure puoi avviare una chat privata con il nostro bot ufficiale {bot_username} per consultare le FAQ, orari delle serate, modalità di tesseramento o aprire una richiesta di supporto diretta con gli organizzatori!
+📍 <i>Aperture e come partecipare</i>
+• 🕒 <b>Quando:</b> Lunedì, Mercoledì e Venerdì (20:45 – 00:00)
+• 📌 <b>Dove:</b> Via Ada Negri 8/A, 10136 Torino (TO)
+• 🎲 <b>Eventi:</b> Tieni d'occhio questo gruppo o il canale <a href="https://t.me/Gildadelgrifonetorino">Eventi</a> per iscriverti ai tavoli!
+✨ <i>La prima serata in associazione è sempre gratuita!</i>
 
 ---
-💬 *Vuoi fare due chiacchiere o organizzare una partita?*
-Abbiamo anche un gruppo [Chiacchiere](https://t.me/+06kSZLelc-5lMzNk), perfetto per metterti d'accordo con gli altri soci o scambiare quattro chiacchiere in libertà!
+💡 <i>Hai domande sulle nostre attività?</i>
+Chiedi pure qui nel gruppo oppure avvia {bot_username} in privato per FAQ, serate, tesseramento e supporto diretto!
+
+---
+💬 <i>Vuoi fare due chiacchiere?</i>
+Abbiamo anche un gruppo <a href="https://t.me/+06kSZLelc-5lMzNk">Chiacchiere</a>, perfetto per metterti d'accordo con gli altri soci o scambiare quattro chiacchiere in libertà!

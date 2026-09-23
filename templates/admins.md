@@ -1,31 +1,31 @@
-🛡️ **Staff e Direttivo - Gilda del Grifone**
+🛡️ <b>Staff e Direttivo - Gilda del Grifone</b>
 
 Ecco la lista dei membri del direttivo e referenti dell'associazione a cui puoi rivolgerti:
 
-👑 **Presidente**
+👑 <b>Presidente</b>
 • Nome: Marco "Torx" Pardini
-• Contatto: [@MarcoTorx](https://t.me/MarcoTorx)
+• Contatto: <a href="https://t.me/MarcoTorx">@MarcoTorx</a>
 
-⚜️ **Vicepresidente**
+⚜️ <b>Vicepresidente</b>
 • Nome: Rosa Maria Chiale
-• Contatto: [@RMKtapody](https://t.me/RMKtapody)
+• Contatto: <a href="https://t.me/RMKtapody">@RMKtapody</a>
 
-💰 **Tesoriere**
+💰 <b>Tesoriere</b>
 • Nome: Raffaele Giove
-• Contatto: [@blitzbergpop](https://t.me/blitzbergpop)
+• Contatto: <a href="https://t.me/blitzbergpop">@blitzbergpop</a>
 
-📜 **Segretario**
+📜 <b>Segretario</b>
 • Nome: Valentin Popescu
-• Contatto: [@Destard](https://t.me/Destard)
+• Contatto: <a href="https://t.me/Destard">@Destard</a>
 
-⚖️ **Consigliere**
+⚖️ <b>Consigliere</b>
 • Nome: Massimiliano Bonelli
-• Contatto: [@Big_Borzof](https://t.me/Big_Borzof)
+• Contatto: <a href="https://t.me/Big_Borzof">@Big_Borzof</a>
 
-🔄 **Supplente**
+🔄 <b>Supplente</b>
 • Nome: Nicolò Salvemini
-• Contatto: [@Astraros](https://t.me/Astraros)
+• Contatto: <a href="https://t.me/Astraros">@Astraros</a>
 
 
 ---
-ℹ️ *Suggerimento:* Se hai una domanda specifica per cui non trovi risposta nelle FAQ, puoi anche usare il pulsante **"🎫 Apri un Ticket"** per inviare una notifica a tutti gli admin contemporaneamente!
+ℹ️ <i>Suggerimento:</i> Se hai una domanda specifica per cui non trovi risposta nelle FAQ, puoi anche usare il pulsante <b>"🎫 Apri un Ticket"</b> per inviare una notifica a tutti gli admin contemporaneamente!

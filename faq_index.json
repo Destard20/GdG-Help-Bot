@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-23T22:32:59.144390+00:00",
+  "generated_at": "2026-09-23T23:08:32.531195+00:00",
   "categories": [
     {
       "id": "48c89781",
@@ -12,7 +12,7 @@
           "title": "A cosa serve la tessera?",
           "filename": "A cosa serve la tessera?.md",
           "path": "FAQ/Iscrizioni e Tesseramento/A cosa serve la tessera?.md",
-          "preview": "La quota associativa annuale della Gilda del Grifone è di €20.",
+          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b.",
           "keywords": [
             "costo",
             "prezzo",
@@ -87,7 +87,7 @@
           "title": "Dove e quando ci troviamo?",
           "filename": "Dove e quando ci troviamo?.md",
           "path": "FAQ/Serate e Eventi/Dove e quando ci troviamo?.md",
-          "preview": "🎲 Ogni Lunedì, Mercoledì e Venerdì: Dalle ore 20:45 fino a mezzanotte.",
+          "preview": "🎲 <bOgni Lunedì, Mercoledì e Venerdì:</b Dalle ore 20:45 fino a mezzanotte.",
           "keywords": [
             "sede",
             "indirizzo",
@@ -110,7 +110,7 @@
       "title": "Cos'è la Gilda del Grifone?",
       "filename": "Cos'è la Gilda del Grifone?.md",
       "path": "FAQ/Cos'è la Gilda del Grifone?.md",
-      "preview": "La Gilda del Grifone è un'associazione di promozione sociale e culturale dedicata al mondo del gioco da tavolo, di ruolo, di carte e di miniature.",
+      "preview": "La <bGilda del Grifone</b è un'associazione di promozione sociale e culturale dedicata al mondo del gioco da tavolo, di ruolo, di carte e di miniature.",
       "keywords": [
         "chi siamo",
         "associazione",
