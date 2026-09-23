@@ -1,0 +1,20 @@
+# Git
+.git/
+
+# Virtual Environments
+venv/
+.venv/
+
+# Secrets and Local configs
+.env
+*.pem
+*.key
+
+# Database and logs
+*.db
+*.sqlite3
+*.log
+
+# Python cache
+__pycache__/
+*.pyc

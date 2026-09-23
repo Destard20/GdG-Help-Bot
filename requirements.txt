@@ -1,0 +1,5 @@
+python-telegram-bot[job-queue]>=20.7
+python-dotenv>=1.0.1
+aiohttp>=3.9.3
+thefuzz>=0.22.1
+python-Levenshtein>=0.25.0

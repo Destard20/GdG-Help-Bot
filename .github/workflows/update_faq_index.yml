@@ -1,0 +1,43 @@
+name: Update FAQ Index
+
+on:
+  push:
+    paths:
+      - 'FAQ/**'
+      - 'scripts/generate_index.py'
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate FAQ Index
+        run: |
+          python scripts/generate_index.py
+
+      - name: Commit and Push if Changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          if [[ -n $(git status --porcelain faq_index.json) ]]; then
+            git add faq_index.json
+            git commit -m "Auto-update FAQ index [skip ci]"
+            git push
+          else
+            echo "No changes in FAQ index."
+          fi
