@@ -1,17 +1,12 @@
 # Dove e quando ci troviamo?
 Keywords: sede, indirizzo, luogo, posto, orario, orari, giorni, mappa, arrivo, apertura
 
-Ci troviamo con regolarità per giocare insieme ogni settimana!
-
-
 ### Orari e Giorni:
-- 🎲 **Giovedì Sera (Serata Giochi da Tavolo):** Dalle ore 20:30 fino a notte fonda (circa 01:00).
-- ⚔️ **Domenica Pomeriggio (GdR & Party Games):** Dalle ore 15:30 alle ore 20:00.
+- 🎲 **Ogni Lunedì, Mercoledì e Venerdì:** Dalle ore 20:45 fino a mezzanotte.
+- ⚔️ **Un wekend al mese:** Una volta al mese siamo aperti anche di Sabato e Domenica! Per vedere quali weekend sono, vedi: *Serate e Eventi > Aperture Straordinarie*.
 
 ### La nostra Sede:
-Ci troviamo presso il Centro Civico "Il Grifone", in **Via dei Meeple 42, 00100 Roma (RM)**.
+Ci troviamo presso il Centro per il Protagonismo Giovanile "Centro Anch'io", in **Via Ada Negri 8/A, 10136 Torino (TO)**.
 Ampio parcheggio gratuito a disposizione davanti all'ingresso.
 
-![Mappa e planimetria della sede](FAQ/images/sede_mappa.png)
-
-Ti consigliamo di arrivare nei primi 30 minuti di apertura per trovare subito un tavolo a cui aggregarti!
+Ti consigliamo di unirti al gruppo Telegram ufficiale della Gilda del Grifone per iscriverti ad uno dei nostri eventi in serata, oppure rischi che quando arrivi tutti i tavoli siano già pieni!
