@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-23T20:44:14.598894+00:00",
+  "generated_at": "2026-09-23T20:46:46.197033+00:00",
   "categories": [
     {
       "id": "48c89781",
@@ -51,6 +51,21 @@
       "name": "Regolamento",
       "path": "FAQ/Regolamento",
       "files": [
+        {
+          "id": "71201327",
+          "title": "Come trattare i giochi della ludoteca?",
+          "filename": "Come trattare i giochi della ludoteca?.md",
+          "path": "FAQ/Regolamento/Come trattare i giochi della ludoteca?.md",
+          "preview": "I giochi della ludoteca sono a disposizione di tutti: abbiatene cura, evitate cibi o bibite aperte sui tavoli da gioco durante le partite.",
+          "keywords": [
+            "cura",
+            "manutenzione",
+            "cibo",
+            "bevande",
+            "bustine",
+            "carte"
+          ]
+        },
         {
           "id": "5fe1328a",
           "title": "Regolamento dell'associazione",
