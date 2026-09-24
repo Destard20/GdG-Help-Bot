@@ -57,6 +57,26 @@ def init_db():
                 FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
             )
         """)
+        # Bot settings / persistent state table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        """)
+        # Pre-seed initial welcome message if not already present
+        cursor.execute("SELECT 1 FROM settings WHERE key = 'last_welcome_message_id'")
+        if not cursor.fetchone():
+            now = datetime.now(timezone.utc).isoformat()
+            cursor.execute("""
+                INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES 
+                ('last_welcome_message_id_-1001704854979', '21471', ?),
+                ('last_welcome_message_id_1704854979', '21471', ?),
+                ('last_welcome_message_id', '21471', ?)
+            """, (now, now, now))
+
+
         conn.commit()
 
 
@@ -193,4 +213,47 @@ def get_user_tickets(user_id: int) -> List[Dict[str, Any]]:
             ORDER BY id DESC
         """, (user_id,))
         return [dict(row) for row in cursor.fetchall()]
+
+
+
+def set_setting(key: str, value: str):
+    """Sets or updates a key-value setting in the database."""
+    now = datetime.now(timezone.utc).isoformat()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO settings (key, value, updated_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+        """, (key, str(value), now))
+        conn.commit()
+
+
+def get_setting(key: str, default: Optional[str] = None) -> Optional[str]:
+    """Retrieves a setting by key."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT value FROM settings WHERE key = ?", (key,))
+        row = cursor.fetchone()
+        return row["value"] if row else default
+
+
+def set_last_welcome_message_id(chat_id: int, message_id: int):
+    """Stores the last welcome message ID for a given chat."""
+    set_setting(f"last_welcome_message_id_{chat_id}", str(message_id))
+    # Also keep general fallback
+    set_setting("last_welcome_message_id", str(message_id))
+
+
+def get_last_welcome_message_id(chat_id: int) -> Optional[int]:
+    """Retrieves the last welcome message ID for a given chat."""
+    val = get_setting(f"last_welcome_message_id_{chat_id}")
+    if val is None:
+        raw_id = str(chat_id).replace("-100", "")
+        val = get_setting(f"last_welcome_message_id_{raw_id}")
+    if val is None:
+        val = get_setting("last_welcome_message_id")
+    if val and (val.isdigit() or (val.startswith("-") and val[1:].isdigit())):
+        return int(val)
+    return None
 

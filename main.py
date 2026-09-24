@@ -33,6 +33,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -91,33 +92,49 @@ def build_main_menu_keyboard() -> InlineKeyboardMarkup:
 # ===================================================================
 
 async def handle_new_chat_members(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Greets new members when they join the group chat."""
+    """Greets new members when they join the group chat and removes the previous welcome message."""
     message = update.effective_message
     if not message or not message.new_chat_members:
         return
 
+    # Filter out bots
+    new_humans = [m for m in message.new_chat_members if not m.is_bot]
+    if not new_humans:
+        return
+
     greeting_template = await faq_manager.get_template("greeting.md")
 
-    for member in message.new_chat_members:
-        # Don't greet ourselves or bots
-        if member.is_bot:
-            continue
+    # Group names together if multiple users join in the same event
+    user_names = ", ".join(html.escape(m.full_name) for m in new_humans)
 
-        # Use full Telegram name (not username) escaped for HTML
-        user_name = html.escape(member.full_name)
+    text = greeting_template.replace("{user_name}", user_names)
+    text = text.replace("{bot_username}", config.BOT_USERNAME)
+    formatted_text = format_telegram_html(text)
 
-        text = greeting_template.replace("{user_name}", user_name)
-        text = text.replace("{bot_username}", config.BOT_USERNAME)
-        formatted_text = format_telegram_html(text)
+    chat_id = message.chat_id
 
+    # 1. Delete previous welcome message from this chat if recorded
+    prev_msg_id = database.get_last_welcome_message_id(chat_id)
+    if prev_msg_id:
         try:
-            await message.reply_text(
-                text=formatted_text,
-                parse_mode=ParseMode.HTML,
-                disable_web_page_preview=True,
-            )
+            await context.bot.delete_message(chat_id=chat_id, message_id=prev_msg_id)
+            logger.info("Deleted previous welcome message #%s in chat %s", prev_msg_id, chat_id)
         except Exception as e:
-            logger.error("Error sending greeting to %s: %s", user_name, e)
+            logger.warning("Could not delete previous welcome message #%s in chat %s: %s", prev_msg_id, chat_id, e)
+
+    # 2. Send new welcome message
+    try:
+        sent_msg = await message.reply_text(
+            text=formatted_text,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+        )
+        # 3. Save new message ID in database
+        database.set_last_welcome_message_id(chat_id, sent_msg.message_id)
+        logger.info("Sent new welcome message #%s in chat %s", sent_msg.message_id, chat_id)
+    except Exception as e:
+        logger.error("Error sending greeting to %s: %s", user_names, e)
+
 
 
 # ===================================================================
