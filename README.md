@@ -8,8 +8,12 @@ Bot Telegram ufficiale per la gestione dell'accoglienza, delle FAQ dinamiche e d
 ### 1. 👥 Accoglienza Nuovi Membri nel Gruppo
 - **Messaggio di benvenuto automatico:** Rileva l'ingresso di un nuovo membro nel gruppo Telegram dell'associazione.
 - **Nome reale (non username):** Saluta la persona usando il suo nome visualizzato su Telegram (`first_name` / `full_name`).
-- **Template Markdown personalizzabile:** Il testo è basato sul file `templates/greeting.md` (aggiornabile da repository o localmente).
+- **Template personalizzabile:** Il testo è basato sul file `templates/greeting.md` (aggiornabile da repository o localmente), con pieno supporto a tag HTML (`<b>`, `<i>`, `<a href="...">`) e formattazione Markdown (`**grassetto**`, `[link](url)`).
+- **Anti-Flood & Cancellazione automatica del messaggio precedente:** Ad ogni nuovo ingresso, il bot elimina automaticamente il messaggio di benvenuto precedente e ne invia uno nuovo. In questo modo la chat del gruppo non viene mai intasata da messaggi di benvenuto a catena e rimane sempre pulita.
+- **Raggruppamento ingressi simultanei:** Se più persone entrano contemporaneamente (es. approvazione massiva da link d'invito o lista d'attesa), i loro nomi vengono raggruppati in un unico messaggio di benvenuto ("*Benvenuto/a Mario, Luigi...*").
+- **Persistenza su Database SQLite:** L'ID dell'ultimo messaggio di benvenuto per ciascun gruppo è memorizzato nella tabella `settings` del database (`tickets.db`), garantendo la cancellazione corretta anche dopo il riavvio o riposizionamento del processo del bot.
 - **Invito alla chat privata:** Al termine del benvenuto invita l'utente a cliccare sull'username del bot (variabile `BOT_USERNAME`, es. `@GdG_Help_Bot`) per consultare le FAQ o fare domande in privato, ricordando comunque che può scrivere anche nel gruppo pubblico.
+
 
 ### 2. 📚 Sistema FAQ Dinamico da GitHub
 - **Sorgente Markdown da GitHub:** Le FAQ risiedono nella cartella `FAQ/` del repository GitHub e vengono caricate tramite URL raw configurabile via `.env` (con fallback locale).
@@ -38,10 +42,11 @@ Bot Telegram ufficiale per la gestione dell'accoglienza, delle FAQ dinamiche e d
   - Oppure specificando l'ID del ticket:
     `/r 1 Ciao! Ecco le informazioni richieste...`
   - Il bot recapiterà la risposta in privato all'utente e confermerà l'invio nel gruppo admin.
-- **Database SQLite:** Tracciamento persistente dei ticket e storico risposte (`tickets.db`).
+- **Database SQLite (`tickets.db`):** Tracciamento persistente dei ticket (`tickets`), dello storico risposte inviate dagli admin (`ticket_responses`) e dello stato del bot/impostazioni (`settings`, inclusa la gestione dei messaggi di benvenuto da rimuovere).
 
 ### 4. 🛡️ Elenco Contatti Admin
-- Presenta un elenco fisso dei referenti dell'associazione formattato in Markdown (`templates/admins.md`).
+- Presenta un elenco dei referenti dell'associazione formattato in HTML/Markdown (`templates/admins.md`), con supporto a link diretti ai profili Telegram e formattazione ricca.
+
 
 ---
 
